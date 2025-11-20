@@ -50,7 +50,10 @@ const Navbar = ({ currentPage, onNavigate, onLoginClick }: { currentPage: Page, 
         >
             Log In
         </button>
-        <button className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white text-sm font-bold rounded-full shadow-lg shadow-blue-500/20 transition-all transform hover:scale-105">
+        <button 
+            onClick={() => onNavigate('contact')}
+            className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white text-sm font-bold rounded-full shadow-lg shadow-blue-500/20 transition-all transform hover:scale-105"
+        >
             Book a Strategy Call
         </button>
       </div>
@@ -115,7 +118,10 @@ const Hero = ({ onNavigate, onLoginClick }: { onNavigate: (page: Page) => void, 
                 LightPath AI partners with agencies to deploy lead qualifying voice agents that call new leads in seconds, qualify them through natural conversation and book appointments into calendars.
             </p>
             <div className="flex flex-col md:flex-row items-center justify-center gap-4">
-                <button className="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white text-lg font-bold rounded-full shadow-xl shadow-blue-500/25 transition-all transform hover:scale-105">
+                <button 
+                    onClick={() => onNavigate('contact')}
+                    className="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white text-lg font-bold rounded-full shadow-xl shadow-blue-500/25 transition-all transform hover:scale-105"
+                >
                     Book a Strategy Call
                 </button>
                 <button onClick={onLoginClick} className="px-8 py-4 bg-white/5 border border-white/10 hover:bg-white/10 text-white text-lg font-bold rounded-full transition-all">
@@ -189,13 +195,13 @@ const SolutionSection = () => (
                      <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 to-purple-500/20 blur-3xl rounded-full"></div>
                      <div className="relative bg-charcoal border border-white/10 rounded-2xl p-8 shadow-2xl">
                         {/* Faux Interface */}
-                        <div className="flex items-center justify-between mb-8 border-b border-white/10 pb-4">
+                        <div className="flex items-center justify-center mb-8 border-b border-white/10 pb-4">
                             <div className="flex items-center gap-3">
                                 <div className="w-3 h-3 rounded-full bg-red-500"></div>
                                 <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                                 <div className="w-3 h-3 rounded-full bg-green-500"></div>
                             </div>
-                            <span className="text-xs font-mono text-slate-500">AGENT_LIVE_STATUS</span>
+                            <span className="text-xs font-mono text-slate-500 ml-auto">AGENT_LIVE_STATUS</span>
                         </div>
                         <div className="space-y-4">
                             <div className="flex gap-4">
@@ -301,14 +307,17 @@ const OutcomesSection = () => (
     </section>
 );
 
-const FinalCTA = () => (
+const FinalCTA = ({ onNavigate }: { onNavigate: (page: Page) => void }) => (
     <section className="py-32 bg-gradient-to-b from-charcoal to-obsidian border-t border-white/5">
         <div className="container mx-auto px-6 text-center">
             <h2 className="text-4xl md:text-6xl font-black font-heading text-white mb-8 tracking-tight">
                 Ready to fix your clients' slow follow up?
             </h2>
             <div className="flex flex-col md:flex-row items-center justify-center gap-6">
-                <button className="px-10 py-5 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white text-xl font-bold rounded-full shadow-2xl shadow-blue-500/20 transition-all transform hover:scale-105">
+                <button 
+                    onClick={() => onNavigate('contact')}
+                    className="px-10 py-5 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white text-xl font-bold rounded-full shadow-2xl shadow-blue-500/20 transition-all transform hover:scale-105"
+                >
                     Book a Strategy Call
                 </button>
             </div>
@@ -318,7 +327,7 @@ const FinalCTA = () => (
 
 // --- SUB-PAGES ---
 
-const ServicesPage = () => (
+const ServicesPage = ({ onNavigate }: { onNavigate: (page: Page) => void }) => (
     <div className="pt-32 pb-20 animate-fade-in">
         <div className="container mx-auto px-6">
             <div className="text-center max-w-3xl mx-auto mb-20">
@@ -379,7 +388,10 @@ const ServicesPage = () => (
                         </span>
                     ))}
                 </div>
-                <button className="px-8 py-4 bg-white text-obsidian font-bold rounded-full hover:bg-slate-200 transition-colors">
+                <button 
+                    onClick={() => onNavigate('contact')}
+                    className="px-8 py-4 bg-white text-obsidian font-bold rounded-full hover:bg-slate-200 transition-colors"
+                >
                     Schedule a Services Overview Call
                 </button>
             </div>
@@ -387,7 +399,7 @@ const ServicesPage = () => (
     </div>
 );
 
-const IntegrationsPage = () => (
+const IntegrationsPage = ({ onNavigate }: { onNavigate: (page: Page) => void }) => (
     <div className="pt-32 pb-20 animate-fade-in">
         <div className="container mx-auto px-6">
             <div className="text-center max-w-3xl mx-auto mb-20">
@@ -453,7 +465,10 @@ const IntegrationsPage = () => (
              <div className="text-center p-10 bg-gradient-to-br from-blue-900/20 to-purple-900/20 rounded-3xl border border-blue-500/20">
                 <h3 className="text-2xl font-bold text-white mb-4">Need something custom?</h3>
                 <p className="text-slate-400 mb-8">We build custom integrations via API, Make, or Zapier to fit complex agency requirements.</p>
-                <button className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-full transition-colors">
+                <button 
+                    onClick={() => onNavigate('contact')}
+                    className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-full transition-colors"
+                >
                     Talk to us about your stack
                 </button>
             </div>
@@ -529,21 +544,21 @@ const Website: React.FC<WebsiteProps> = ({ onLoginClick }) => {
           <HowItWorks />
           <ToolsSection onLoginClick={onLoginClick} />
           <OutcomesSection />
-          <FinalCTA />
+          <FinalCTA onNavigate={setCurrentPage} />
         </main>
       )}
 
       {currentPage === 'services' && (
         <main>
-            <ServicesPage />
-            <FinalCTA />
+            <ServicesPage onNavigate={setCurrentPage} />
+            <FinalCTA onNavigate={setCurrentPage} />
         </main>
       )}
 
       {currentPage === 'integrations' && (
         <main>
-            <IntegrationsPage />
-            <FinalCTA />
+            <IntegrationsPage onNavigate={setCurrentPage} />
+            <FinalCTA onNavigate={setCurrentPage} />
         </main>
       )}
 
