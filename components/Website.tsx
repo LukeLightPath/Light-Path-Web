@@ -138,7 +138,7 @@ const ProblemSection = () => (
             <div className="text-center mb-16">
                 <h2 className="text-3xl md:text-4xl font-bold font-heading text-white mb-4">
                     Most agencies don't have a lead problem.<br/>
-                    <span className="text-slate-400">They have a response problem.</span>
+                    <span className="text-slate-400">They're clients have a response problem.</span>
                 </h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -166,17 +166,17 @@ const SolutionSection = () => (
             <div className="flex flex-col lg:flex-row items-center gap-16">
                 <div className="lg:w-1/2">
                     <h2 className="text-4xl md:text-5xl font-black font-heading text-white mb-6">
-                        LightPath AI calls every lead in seconds.
+                        Convert more leads with instant follow-up.
                     </h2>
                     <p className="text-lg text-slate-400 mb-8 leading-relaxed">
-                        We deploy AI voice agents that act as your client's best SDR. They greet leads instantly, ask qualifying questions based on your script, and push booked appointments directly into calendars.
+                        Most businesses don’t lose leads because they’re unqualified. They lose them because no one responds quickly enough. Prospects wait. They lose interest. They choose a competitor.
                     </p>
                     <ul className="space-y-4">
                         {[
-                            "Call leads in less than 60 seconds",
-                            "Qualify using your client’s script and criteria",
-                            "Push appointments directly into calendars and CRMs",
-                            "Full call recordings and transcripts"
+                            "Call every lead in under 60 seconds",
+                            "Stop lead wastage by qualifying with your exact script and criteria",
+                            "Book appointments directly into calendars and CRMs",
+                            "Access full call recordings and transcripts for total visibility"
                         ].map((item, i) => (
                             <li key={i} className="flex items-start gap-3 text-slate-300">
                                 <CheckCircleIcon className="w-6 h-6 text-cyan-400 flex-shrink-0" />
@@ -201,19 +201,19 @@ const SolutionSection = () => (
                             <div className="flex gap-4">
                                 <div className="w-8 h-8 rounded-full bg-blue-600 flex-shrink-0 flex items-center justify-center text-xs text-white">AI</div>
                                 <div className="bg-white/10 p-3 rounded-r-xl rounded-bl-xl text-sm text-slate-200">
-                                    Hi John, this is Sarah from LightPath. I saw you just asked about our agency pricing tool?
+                                    Hi James, this is Sarah from Maple Mortgages. I saw you just applied for a mortgage a moment ago.
                                 </div>
                             </div>
                             <div className="flex gap-4 flex-row-reverse">
                                 <div className="w-8 h-8 rounded-full bg-slate-600 flex-shrink-0 flex items-center justify-center text-xs text-white">Lead</div>
                                 <div className="bg-blue-600/20 p-3 rounded-l-xl rounded-br-xl text-sm text-blue-100 border border-blue-500/20">
-                                    Yeah that was fast! I'm wondering if it works for real estate clients?
+                                    Oh wow, that was quick. Yeah, I’m just trying to see what I’d be eligible for.
                                 </div>
                             </div>
                              <div className="flex gap-4">
                                 <div className="w-8 h-8 rounded-full bg-blue-600 flex-shrink-0 flex items-center justify-center text-xs text-white">AI</div>
                                 <div className="bg-white/10 p-3 rounded-r-xl rounded-bl-xl text-sm text-slate-200">
-                                    It absolutely does. We have a specific model for real estate. Would you like to see a 15-min demo tomorrow?
+                                    Perfect. I can help with that. To get you matched with the right advisor, can I quickly confirm whether you're looking to buy a new property or remortgage your current one?
                                 </div>
                             </div>
                         </div>
@@ -246,10 +246,10 @@ const HowItWorks = () => (
     </section>
 );
 
-const ToolsSection = () => (
+const ToolsSection = ({ onLoginClick }: { onLoginClick: () => void }) => (
     <section className="py-24 bg-obsidian">
         <div className="container mx-auto px-6 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold font-heading text-white mb-16">AI tools built for performance agencies</h2>
+            <h2 className="text-3xl md:text-4xl font-bold font-heading text-white mb-16">AI tools suite built for our agency partners</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
                 <div className="p-8 bg-gradient-to-br from-white/5 to-white/0 border border-white/10 rounded-2xl hover:border-cyan-500/30 transition-all text-left">
                     <CplIcon className="w-10 h-10 text-cyan-400 mb-6" />
@@ -266,8 +266,11 @@ const ToolsSection = () => (
                     <p className="text-slate-600 text-sm leading-relaxed">Access our full suite of 10+ agency growth tools by booking a call or logging in.</p>
                 </div>
             </div>
-            <button className="px-8 py-3 bg-white/10 hover:bg-white/20 text-white font-bold rounded-full transition-colors">
-                View All Tools
+            <button 
+                onClick={onLoginClick}
+                className="px-8 py-3 bg-white/10 hover:bg-white/20 text-white font-bold rounded-full transition-colors"
+            >
+                Access Growth Tools
             </button>
         </div>
     </section>
@@ -298,40 +301,15 @@ const OutcomesSection = () => (
     </section>
 );
 
-const Testimonials = () => (
-    <section className="py-24 bg-obsidian">
-        <div className="container mx-auto px-6">
-             <div className="text-center mb-16">
-                <h2 className="text-3xl md:text-4xl font-bold font-heading text-white">What agency owners are saying</h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {[1, 2, 3].map((i) => (
-                    <div key={i} className="p-8 bg-white/5 rounded-2xl border border-white/5">
-                        <div className="flex text-yellow-500 mb-4">★★★★★</div>
-                        <p className="text-slate-300 mb-6 italic">"LightPath totally changed how we handle leads. Our conversion rate doubled in the first month."</p>
-                        <div>
-                            <p className="text-white font-bold">Agency Founder</p>
-                            <p className="text-slate-500 text-sm">Performance Marketing</p>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
-    </section>
-);
-
 const FinalCTA = () => (
     <section className="py-32 bg-gradient-to-b from-charcoal to-obsidian border-t border-white/5">
         <div className="container mx-auto px-6 text-center">
             <h2 className="text-4xl md:text-6xl font-black font-heading text-white mb-8 tracking-tight">
-                Ready to fix slow follow up?
+                Ready to fix your clients' slow follow up?
             </h2>
             <div className="flex flex-col md:flex-row items-center justify-center gap-6">
                 <button className="px-10 py-5 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white text-xl font-bold rounded-full shadow-2xl shadow-blue-500/20 transition-all transform hover:scale-105">
                     Book a Strategy Call
-                </button>
-                <button className="text-slate-400 hover:text-white font-medium transition-colors">
-                    Contact us
                 </button>
             </div>
         </div>
@@ -354,13 +332,13 @@ const ServicesPage = () => (
                 {[
                     {
                         title: "Voice Lead Qualification",
-                        desc: "AI voice agents that answer inbound leads, call new leads, ask qualifying questions and book meetings into calendars.",
-                        bullets: ["Custom scripts & personas", "Multi-language options", "Call recordings & transcripts", "Real-time reporting"]
+                        desc: "AI voice agents that stop leads slipping through the cracks. They call every new lead instantly, ask the key qualifying questions your clients never get to, and turn more inquiries into booked meetings.",
+                        bullets: ["Custom scripts & personas", "Call recordings & transcripts", "Multi-language options", "Real-time reporting"]
                     },
                     {
                         title: "Speed to Lead Engine",
-                        desc: "Setup so that all leads from forms, ads and CRM triggers are called within 10 to 60 seconds.",
-                        bullets: ["Integrations with major CRMs", "SLA tracking & analytics", "Alerts when response time slips", "Fail-safe retry logic"]
+                        desc: "Setup that ensures every lead from forms, ads and CRM triggers is called before your competitors. No delays, no missed opportunities, no wasted ad spend.",
+                        bullets: ["Integrations with major CRMs", "Alerts when response time slips", "Real-time performance monitoring", "Fail-safe retry logic"]
                     },
                     {
                         title: "Revenue & Pricing Tools",
@@ -549,9 +527,8 @@ const Website: React.FC<WebsiteProps> = ({ onLoginClick }) => {
           <ProblemSection />
           <SolutionSection />
           <HowItWorks />
-          <ToolsSection />
+          <ToolsSection onLoginClick={onLoginClick} />
           <OutcomesSection />
-          <Testimonials />
           <FinalCTA />
         </main>
       )}
