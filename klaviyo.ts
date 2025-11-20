@@ -1,3 +1,4 @@
+
 const KLAVIYO_PUBLIC_KEY = "XqaUyt";
 
 export const sendUserToKlaviyo = async (

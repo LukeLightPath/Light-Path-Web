@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { CplIcon, LvrIcon, CheckCircleIcon, LightPathLogo } from './icons';
+import { CplIcon, LvrIcon, CheckCircleIcon, LightPathLogo, DangerIcon } from './icons';
 import VoiceAgent from './VoiceAgent';
+// Removed direct import of sendWebsiteEnquiryToKlaviyo to prevent client-side calls
 
 type Page = 'home' | 'services' | 'integrations' | 'contact';
 
@@ -476,7 +477,51 @@ const IntegrationsPage = ({ onNavigate }: { onNavigate: (page: Page) => void }) 
     </div>
 );
 
-const ContactPage = () => (
+const ContactPage = () => {
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        agencyName: '',
+        message: ''
+    });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+        if (status !== 'idle') setStatus('idle'); // Reset status on input change
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        setStatus('idle');
+        
+        try {
+            const response = await fetch("/api/website-enquiry", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(formData),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                setStatus('success');
+                setFormData({ firstName: '', lastName: '', email: '', agencyName: '', message: '' });
+            } else {
+                setStatus('error');
+            }
+        } catch (error: any) {
+            console.error(error);
+            setStatus('error');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    return (
     <div className="pt-32 pb-20 animate-fade-in">
         <div className="container mx-auto px-6 max-w-4xl">
             <div className="text-center mb-16">
@@ -486,43 +531,124 @@ const ContactPage = () => (
                 </p>
             </div>
 
-            <div className="bg-charcoal border border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl">
-                <form className="space-y-6">
+            <div className="bg-charcoal border border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
+                
+                {status === 'success' && (
+                    <div className="mb-8 p-4 bg-green-500/10 border border-green-500/20 rounded-xl flex items-start gap-3 animate-fade-in">
+                        <CheckCircleIcon className="w-6 h-6 text-green-500 mt-0.5 flex-shrink-0" />
+                        <div>
+                            <p className="text-green-400 font-bold">Enquiry Received</p>
+                            <p className="text-green-300/80 text-sm">Thanks. We’ve received your enquiry and will reply within one business day.</p>
+                        </div>
+                    </div>
+                )}
+
+                {status === 'error' && (
+                    <div className="mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-start gap-3 animate-fade-in">
+                        <DangerIcon className="w-6 h-6 text-red-500 mt-0.5 flex-shrink-0" />
+                        <div>
+                            <p className="text-red-400 font-bold">Submission Failed</p>
+                            <p className="text-red-300/80 text-sm">We couldn’t submit your enquiry. Please try again, or email us directly if this keeps happening.</p>
+                        </div>
+                    </div>
+                )}
+
+                <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label className="block text-sm font-bold text-slate-400 mb-2">First Name</label>
-                            <input type="text" className="w-full p-3 bg-obsidian border border-white/10 rounded-lg text-white focus:border-cyan-500 outline-none transition-colors" placeholder="Jane" />
+                            <label className="block text-sm font-bold text-slate-400 mb-2" htmlFor="firstName">First Name</label>
+                            <input 
+                                type="text" 
+                                name="firstName"
+                                id="firstName"
+                                value={formData.firstName}
+                                onChange={handleChange}
+                                className="w-full p-3 bg-obsidian border border-white/10 rounded-lg text-white focus:border-cyan-500 outline-none transition-colors placeholder-slate-600 disabled:opacity-50" 
+                                placeholder="Jane"
+                                required 
+                                disabled={isSubmitting}
+                            />
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-slate-400 mb-2">Last Name</label>
-                            <input type="text" className="w-full p-3 bg-obsidian border border-white/10 rounded-lg text-white focus:border-cyan-500 outline-none transition-colors" placeholder="Doe" />
+                            <label className="block text-sm font-bold text-slate-400 mb-2" htmlFor="lastName">Last Name</label>
+                            <input 
+                                type="text" 
+                                name="lastName"
+                                id="lastName"
+                                value={formData.lastName}
+                                onChange={handleChange}
+                                className="w-full p-3 bg-obsidian border border-white/10 rounded-lg text-white focus:border-cyan-500 outline-none transition-colors placeholder-slate-600 disabled:opacity-50" 
+                                placeholder="Doe"
+                                disabled={isSubmitting}
+                            />
                         </div>
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label className="block text-sm font-bold text-slate-400 mb-2">Email Address</label>
-                            <input type="email" className="w-full p-3 bg-obsidian border border-white/10 rounded-lg text-white focus:border-cyan-500 outline-none transition-colors" placeholder="jane@agency.com" />
+                            <label className="block text-sm font-bold text-slate-400 mb-2" htmlFor="email">Email Address</label>
+                            <input 
+                                type="email" 
+                                name="email"
+                                id="email"
+                                value={formData.email}
+                                onChange={handleChange}
+                                className="w-full p-3 bg-obsidian border border-white/10 rounded-lg text-white focus:border-cyan-500 outline-none transition-colors placeholder-slate-600 disabled:opacity-50" 
+                                placeholder="jane@agency.com"
+                                required 
+                                disabled={isSubmitting}
+                            />
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-slate-400 mb-2">Agency Name</label>
-                            <input type="text" className="w-full p-3 bg-obsidian border border-white/10 rounded-lg text-white focus:border-cyan-500 outline-none transition-colors" placeholder="Growth Partners" />
+                            <label className="block text-sm font-bold text-slate-400 mb-2" htmlFor="agencyName">Agency Name</label>
+                            <input 
+                                type="text" 
+                                name="agencyName"
+                                id="agencyName"
+                                value={formData.agencyName}
+                                onChange={handleChange}
+                                className="w-full p-3 bg-obsidian border border-white/10 rounded-lg text-white focus:border-cyan-500 outline-none transition-colors placeholder-slate-600 disabled:opacity-50" 
+                                placeholder="Growth Partners" 
+                                disabled={isSubmitting}
+                            />
                         </div>
                     </div>
                     
                     <div>
-                        <label className="block text-sm font-bold text-slate-400 mb-2">How can we help?</label>
-                        <textarea rows={4} className="w-full p-3 bg-obsidian border border-white/10 rounded-lg text-white focus:border-cyan-500 outline-none transition-colors" placeholder="I'm interested in the voice agent for my real estate clients..."></textarea>
+                        <label className="block text-sm font-bold text-slate-400 mb-2" htmlFor="message">How can we help?</label>
+                        <textarea 
+                            name="message"
+                            id="message"
+                            rows={4} 
+                            value={formData.message}
+                            onChange={handleChange}
+                            className="w-full p-3 bg-obsidian border border-white/10 rounded-lg text-white focus:border-cyan-500 outline-none transition-colors placeholder-slate-600 disabled:opacity-50" 
+                            placeholder="I'm interested in the voice agent for my real estate clients..."
+                            disabled={isSubmitting}
+                        ></textarea>
                     </div>
 
-                    <button className="w-full py-4 bg-white text-obsidian font-bold rounded-lg hover:bg-slate-200 transition-colors">
-                        Send Message
+                    <button 
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="w-full py-4 bg-white text-obsidian font-bold rounded-lg hover:bg-slate-200 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2"
+                    >
+                        {isSubmitting ? (
+                            <>
+                                <svg className="animate-spin h-5 w-5 text-obsidian" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Sending...
+                            </>
+                        ) : 'Send Message'}
                     </button>
                 </form>
             </div>
         </div>
     </div>
-);
+    );
+};
 
 const Website: React.FC<WebsiteProps> = ({ onLoginClick }) => {
   const [currentPage, setCurrentPage] = useState<Page>('home');

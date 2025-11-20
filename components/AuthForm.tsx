@@ -140,7 +140,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onBackToWebsite }) => {
                 LightPath AI
             </h1>
             <p className="mt-4 text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-                Agency Performance Suite
+                AI growth agency tools suite
             </p>
         </header>
         
