@@ -1,4 +1,3 @@
-
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -8,64 +7,117 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const KLAVIYO_API_KEY = "XqaUyt";
-const LIST_ID = "YiZCZt";
 
 // Middleware
-app.use(express.json());
+app.use(express.json() as any);
 
-// API Routes
-app.post('/api/website-enquiry', async (req, res) => {
-  const { firstName, lastName, email, agencyName, message } = req.body;
-
-  // Validation
-  if (!email || !firstName) {
-    return res.status(400).json({ success: false, message: "Missing required fields" });
-  }
-
-  const endpoint = `https://a.klaviyo.com/api/v2/list/${LIST_ID}/members`;
+// CORS and Preflight Middleware
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   
-  const payload = {
-    profiles: [
-      {
-        email: email,
-        first_name: firstName,
-        last_name: lastName || "",
-        properties: {
-          agency_name: agencyName || "",
-          enquiry_message: message || "",
-          source: "LightPath website contact form"
-        }
-      }
-    ]
-  };
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  next();
+});
 
+// NOTE: Klaviyo contact API; responds with JSON only. UI and copy unchanged.
+app.post('/api/klaviyo-contact', async (req, res) => {
   try {
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Klaviyo-API-Key ${KLAVIYO_API_KEY}`
-      },
-      body: JSON.stringify(payload)
-    });
+    const { firstName, lastName, email, agencyName, message } = req.body;
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Klaviyo API Error:", response.status, errorText);
-      return res.status(500).json({ success: false, message: "Klaviyo request failed" });
+    // Validation
+    if (!email || !firstName || !lastName) {
+      return res.status(400).json({ success: false, error: "First Name, Last Name, and Email are required." });
     }
 
+    // Read credentials from environment
+    const apiKey = process.env.KLAVIYO_PRIVATE_API_KEY;
+    const listId = process.env.KLAVIYO_LIST_ID;
+
+    if (!apiKey || !listId) {
+      console.warn("Server Warning: Missing KLAVIYO_PRIVATE_API_KEY or KLAVIYO_LIST_ID");
+      return res.status(500).json({ success: false, error: "Server configuration error." });
+    }
+
+    // 1. Create or Update Profile in Klaviyo
+    const profilePayload = {
+      data: {
+        type: 'profile',
+        attributes: {
+          email,
+          first_name: firstName,
+          last_name: lastName,
+          organization: agencyName,
+          properties: {
+            contact_message: message,
+            source: 'Website Contact Form'
+          }
+        }
+      }
+    };
+
+    const profileResponse = await fetch('https://a.klaviyo.com/api/profiles', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Klaviyo-API-Key ${apiKey}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Revision': '2023-10-15'
+      },
+      body: JSON.stringify(profilePayload)
+    });
+
+    if (!profileResponse.ok) {
+      const errorText = await profileResponse.text();
+      console.error("Klaviyo Profile Error:", profileResponse.status, errorText);
+      return res.status(400).json({ success: false, error: "Failed to save contact details." });
+    }
+
+    const profileData = await profileResponse.json();
+    const profileId = profileData.data?.id;
+
+    // 2. Add Profile to List (if we have an ID)
+    if (profileId) {
+      const listPayload = {
+        data: [{ type: 'profile', id: profileId }]
+      };
+
+      const listResponse = await fetch(`https://a.klaviyo.com/api/lists/${listId}/relationships/profiles`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Klaviyo-API-Key ${apiKey}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Revision': '2023-10-15'
+        },
+        body: JSON.stringify(listPayload)
+      });
+
+      if (!listResponse.ok) {
+        const listError = await listResponse.text();
+        console.error("Klaviyo List Error:", listResponse.status, listError);
+      }
+    }
+
+    // Success
     return res.status(200).json({ success: true });
-  } catch (error) {
-    console.error("Server Error:", error);
-    return res.status(500).json({ success: false, message: "Internal server error" });
+
+  } catch (error: any) {
+    console.error("Internal Server Error (Klaviyo Handler):", error);
+    return res.status(500).json({ success: false, error: "Internal server error." });
   }
 });
 
-// Serve Static Assets (React App)
-// Assuming build output is in 'dist' or 'build'
-app.use(express.static(path.join(__dirname, 'dist')));
+// JSON 404 Fallback for API routes to prevent HTML leaking into JSON consumers
+app.all('/api/*', (req, res) => {
+  res.status(404).json({ success: false, error: "API endpoint not found." });
+});
+
+// Serve Static Assets
+app.use(express.static(path.join(__dirname, 'dist')) as any);
 
 // SPA Fallback
 app.get('*', (req, res) => {

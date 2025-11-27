@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 type IconProps = {
@@ -108,42 +107,23 @@ export const LightPathLogo: React.FC<IconProps> = ({ className }) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className={className}>
         <defs>
             <linearGradient id="sphereGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#f8fafc" />
-                <stop offset="100%" stopColor="#94a3b8" />
+                <stop offset="0%" stopColor="#e7e5e4" />
+                <stop offset="100%" stopColor="#78716c" />
             </linearGradient>
-            <filter id="neonGlow" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="12" result="blur" />
-                <feComposite in="SourceGraphic" in2="blur" operator="over" />
-            </filter>
+            {/* Removed neon filter for cleaner look */}
         </defs>
         
-        {/* Glowing S-Curve Path */}
+        {/* S-Curve Path - Clean Blue/Grey */}
         <path 
             d="M128 340 C 228 340, 284 172, 384 172" 
             fill="none" 
-            stroke="#06b6d4" 
-            strokeWidth="32" 
-            strokeLinecap="round"
-            className="opacity-40"
-            filter="url(#neonGlow)"
-        />
-        <path 
-            d="M128 340 C 228 340, 284 172, 384 172" 
-            fill="none" 
-            stroke="#06b6d4" 
-            strokeWidth="20" 
+            stroke="#1c1917" 
+            strokeWidth="24" 
             strokeLinecap="round"
         />
-        <path 
-            d="M128 340 C 228 340, 284 172, 384 172" 
-            fill="none" 
-            stroke="#a5f3fc" 
-            strokeWidth="6" 
-            strokeLinecap="round"
-        />
-
+        
         {/* Silver Spheres */}
-        <circle cx="128" cy="340" r="56" fill="url(#sphereGradient)" className="drop-shadow-xl" />
-        <circle cx="384" cy="172" r="56" fill="url(#sphereGradient)" className="drop-shadow-xl" />
+        <circle cx="128" cy="340" r="56" fill="url(#sphereGradient)" className="drop-shadow-sm" />
+        <circle cx="384" cy="172" r="56" fill="url(#sphereGradient)" className="drop-shadow-sm" />
     </svg>
 );

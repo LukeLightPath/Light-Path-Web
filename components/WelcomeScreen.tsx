@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { CalculatorType } from '../types';
 import { CplIcon, LvrIcon, OutreachIcon, IcpIcon, PainPointIcon, PerformanceAnalystIcon, PostPunchlineMakerIcon, PersonaPostWriterIcon, EmailSequenceIcon } from './icons';
 
@@ -7,16 +6,24 @@ interface WelcomeScreenProps {
   onSelect: (type: CalculatorType) => void;
 }
 
+interface ToolCardProps {
+    title: string;
+    description: string;
+    icon: React.ElementType;
+    onClick: () => void;
+    fullWidth?: boolean;
+}
+
 const tutorials = [
   {
     title: "Lead Pricing Tool",
     description: "Calculate the max CPL your client can afford and your ideal price per lead.",
-    videoId: "VIDEO_ID_LEAD_PRICING"
+    videoId: "dKOgiwpmaXE"
   },
   {
     title: "Advanced Lead Velocity Rate",
     description: "Forecast monthly leads and revenue to quantify your campaign impact.",
-    videoId: "VIDEO_ID_ALVR"
+    videoId: "jgAzYenTEWI"
   },
   {
     title: "Performance Analyst",
@@ -55,18 +62,12 @@ const tutorials = [
   }
 ];
 
-const ToolCard = ({ 
+const ToolCard: React.FC<ToolCardProps> = ({ 
     title, 
     description, 
     icon: Icon, 
     onClick, 
     fullWidth = false 
-}: { 
-    title: string; 
-    description: string; 
-    icon: any; 
-    onClick: () => void; 
-    fullWidth?: boolean; 
 }) => (
     <button
         onClick={onClick}
@@ -90,6 +91,8 @@ const ToolCard = ({
 );
 
 const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSelect }) => {
+  const [activeVideoId, setActiveVideoId] = useState<string | null>(null);
+
   return (
     <div className="animate-fade-in">
       
@@ -195,33 +198,82 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSelect }) => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {tutorials.map((tutorial, index) => (
-            <div key={index} className="bg-white dark:bg-charcoal border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden flex flex-col hover:border-blue-300 dark:hover:border-white/20 transition-colors group shadow-sm">
-              {/* Video Container */}
-              <div className="w-full aspect-video bg-black relative">
-                <iframe 
-                  src={`https://www.youtube.com/embed/${tutorial.videoId}`}
-                  title={`${tutorial.title} Tutorial`}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  className="absolute top-0 left-0 w-full h-full opacity-90 group-hover:opacity-100 transition-opacity"
-                ></iframe>
+          {tutorials.map((tutorial, index) => {
+            const hasVideo = tutorial.videoId && !tutorial.videoId.startsWith('VIDEO_ID_');
+            return (
+              <div key={index} className="bg-white dark:bg-charcoal border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden flex flex-col hover:border-blue-300 dark:hover:border-white/20 transition-colors group shadow-sm">
+                {/* Video Thumbnail / Trigger */}
+                {hasVideo ? (
+                  <div 
+                    className="w-full aspect-video bg-slate-900 relative cursor-pointer overflow-hidden"
+                    onClick={() => setActiveVideoId(tutorial.videoId)}
+                  >
+                    <img 
+                      src={`https://img.youtube.com/vi/${tutorial.videoId}/hqdefault.jpg`} 
+                      alt={tutorial.title}
+                      className="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/10 transition-colors">
+                      <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:bg-white/30">
+                        <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-lg">
+                          <svg className="w-5 h-5 text-blue-600 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex h-full min-h-[180px] items-center justify-center bg-[#F9FAFB] text-[16px] text-[#6B7280]">
+                    Coming Soon
+                  </div>
+                )}
+                
+                {/* Content */}
+                <div className="p-6 flex-1 flex flex-col">
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white font-heading mb-2">
+                    {tutorial.title}
+                  </h3>
+                  <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                    {tutorial.description}
+                  </p>
+                </div>
               </div>
-              
-              {/* Content */}
-              <div className="p-6 flex-1 flex flex-col">
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white font-heading mb-2">
-                  {tutorial.title}
-                </h3>
-                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
-                  {tutorial.description}
-                </p>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
+
+      {/* Video Modal */}
+      {activeVideoId && (
+        <div 
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm transition-opacity duration-300"
+            onClick={() => setActiveVideoId(null)}
+        >
+            <div 
+                className="relative w-full max-w-5xl aspect-video bg-black rounded-2xl shadow-2xl overflow-hidden animate-fade-in-up"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <button 
+                    onClick={() => setActiveVideoId(null)}
+                    className="absolute top-4 right-4 z-10 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors backdrop-blur-md"
+                    aria-label="Close video"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+                <iframe 
+                    src={`https://www.youtube.com/embed/${activeVideoId}?autoplay=1`}
+                    title="Video Tutorial"
+                    className="w-full h-full"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                ></iframe>
+            </div>
+        </div>
+      )}
     </div>
   );
 };

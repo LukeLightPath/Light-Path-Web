@@ -24,26 +24,26 @@ const EmailVerificationRequired: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex flex-col justify-center items-center p-4">
+        <div className="min-h-screen bg-[#fdfcfc] flex flex-col justify-center items-center p-4">
             <div className="w-full max-w-md">
                 <header className="py-8 text-center">
-                    <h1 className="text-4xl font-bold font-heading text-slate-900 dark:text-slate-50 tracking-tight">
+                    <h1 className="text-3xl font-bold font-heading text-stone-900 tracking-tight">
                         LightPath AI Agency Performance Suite
                     </h1>
                 </header>
-                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 sm:p-8 text-center">
-                    <h2 className="text-2xl font-bold font-heading text-slate-800 dark:text-slate-100 mb-4">
+                <div className="bg-white rounded-lg shadow-card border border-stone-200 p-6 sm:p-8 text-center">
+                    <h2 className="text-2xl font-bold font-heading text-stone-900 mb-4">
                         Verify your email to continue
                     </h2>
-                    <p className="text-slate-600 dark:text-slate-400 mb-2">
+                    <p className="text-stone-600 mb-2">
                         We have sent a verification link to your inbox. Please click the link to activate your account and access your LightPath tools.
                     </p>
-                    <p className="text-slate-500 dark:text-slate-400 mb-6" style={{ fontSize: '13px', color: '#666' }}>
+                    <p className="text-stone-500 mb-6" style={{ fontSize: '13px' }}>
                         If you don’t see the email in the next few minutes, please check your junk or spam folder.
                     </p>
                     
                     {message && (
-                        <p aria-live="polite" className={`text-sm mb-4 ${messageType === 'success' ? 'text-green-600 dark:text-green-400' : 'text-red-500'}`}>
+                        <p aria-live="polite" className={`text-sm mb-4 ${messageType === 'success' ? 'text-green-700' : 'text-red-600'}`}>
                             {message}
                         </p>
                     )}
@@ -52,13 +52,13 @@ const EmailVerificationRequired: React.FC = () => {
                         <button 
                             onClick={handleResend}
                             disabled={isSending}
-                            className="w-full py-3 px-4 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 transition-colors shadow-lg disabled:bg-primary-400 disabled:cursor-not-allowed"
+                            className="w-full py-3 px-4 bg-stone-900 text-white font-medium rounded-md hover:bg-stone-800 transition-colors shadow-sm disabled:bg-stone-400 disabled:cursor-not-allowed"
                         >
                             {isSending ? 'Sending...' : 'Resend verification email'}
                         </button>
                         <button 
                             onClick={logout}
-                            className="w-full py-3 px-4 bg-slate-200 dark:bg-slate-600 text-slate-800 dark:text-slate-100 font-semibold rounded-lg hover:bg-slate-300 dark:hover:bg-slate-500 transition-colors"
+                            className="w-full py-3 px-4 bg-stone-100 text-stone-700 font-medium rounded-md hover:bg-stone-200 transition-colors"
                         >
                             Log Out
                         </button>

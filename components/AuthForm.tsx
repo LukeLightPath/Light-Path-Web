@@ -1,10 +1,8 @@
-
 import React, { useState, FormEvent, useEffect } from 'react';
 import { useAuth } from '../AuthContext';
 import { FirebaseError } from 'firebase/app';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../firebase';
-import { ThemeToggle } from './ThemeToggle';
 import { BackIcon } from './icons';
 
 interface AuthFormProps {
@@ -120,60 +118,55 @@ const AuthForm: React.FC<AuthFormProps> = ({ onBackToWebsite }) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center p-4 relative bg-slate-50 dark:bg-obsidian transition-colors duration-300">
+    <div className="min-h-screen flex flex-col justify-center items-center p-4 relative bg-[#fdfcfc] transition-colors duration-300">
       {/* Top Navigation */}
-      <div className="absolute top-4 left-4 z-20">
+      <div className="absolute top-6 left-6 z-20">
          {onBackToWebsite && (
-             <button onClick={onBackToWebsite} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+             <button onClick={onBackToWebsite} className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-stone-600 hover:text-stone-900 transition-colors">
                  <BackIcon className="w-4 h-4" />
                  Back to Home
              </button>
          )}
       </div>
-      <div className="absolute top-4 right-4 z-20">
-        <ThemeToggle />
-      </div>
 
       <div className="w-full max-w-md relative z-10">
         <header className="py-12 text-center">
-            <h1 className="text-4xl md:text-6xl font-black font-heading text-slate-900 dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-blue-400 dark:via-purple-400 dark:to-cyan-400 tracking-tight drop-shadow-sm">
+            <h1 className="text-3xl font-bold font-heading text-stone-900 tracking-tight">
                 LightPath AI
             </h1>
-            <p className="mt-4 text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+            <p className="mt-2 text-lg text-stone-500 font-light">
                 AI growth agency tools suite
             </p>
         </header>
         
         {/* Auth Card */}
-        <div className="bg-white dark:bg-white/5 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-3xl shadow-xl dark:shadow-[0_0_40px_rgba(0,0,0,0.2)] p-8 relative overflow-hidden transition-colors duration-300">
-             {/* Decorative glowing line top */}
-            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-blue-500 dark:via-cyan-500 to-transparent opacity-50"></div>
-
+        <div className="bg-white border border-stone-200 rounded-lg shadow-card p-8 relative overflow-hidden">
+            
             {verificationMessage && (
-              <div className="mb-6 p-4 rounded-xl bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 text-sm text-center text-green-600 dark:text-green-400" role="alert">
+              <div className="mb-6 p-4 rounded-md bg-green-50 border border-green-100 text-sm text-center text-green-700" role="alert">
                 {verificationMessage}
               </div>
             )}
 
-            <div className="flex p-1 bg-slate-100 dark:bg-black/20 rounded-xl mb-8">
-                <button onClick={() => handleTabSwitch(true)} className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all duration-300 ${isLogin ? 'bg-white dark:bg-slate-700/50 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white'}`}>Log In</button>
-                <button onClick={() => handleTabSwitch(false)} className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all duration-300 ${!isLogin ? 'bg-white dark:bg-slate-700/50 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white'}`}>Create Account</button>
+            <div className="flex p-1 bg-stone-100 rounded-md mb-8">
+                <button onClick={() => handleTabSwitch(true)} className={`flex-1 py-2 text-sm font-medium rounded transition-all duration-200 ${isLogin ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}>Log In</button>
+                <button onClick={() => handleTabSwitch(false)} className={`flex-1 py-2 text-sm font-medium rounded transition-all duration-200 ${!isLogin ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}>Create Account</button>
             </div>
             
             <form onSubmit={handleSubmit} className="space-y-5">
                 {!isLogin && (
                   <div>
-                    <label htmlFor="firstName" className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">First name</label>
-                    <input type="text" id="firstName" value={firstName} onChange={e => { setFirstName(e.target.value); clearMessages(); }} required className="w-full px-4 py-3 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/5 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 dark:focus:border-cyan-500/50 focus:ring-1 focus:ring-blue-500 dark:focus:ring-cyan-500/50 transition-all" placeholder="Enter your first name" />
+                    <label htmlFor="firstName" className="block text-xs font-semibold text-stone-500 uppercase tracking-wider mb-1.5">First name</label>
+                    <input type="text" id="firstName" value={firstName} onChange={e => { setFirstName(e.target.value); clearMessages(); }} required className="w-full px-4 py-3 bg-white border border-stone-300 rounded-md text-stone-900 placeholder-stone-400 focus:outline-none focus:border-stone-500 focus:ring-0 transition-all" placeholder="Enter your first name" />
                   </div>
                 )}
                 <div>
-                    <label htmlFor="email" className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Email address</label>
-                    <input type="email" id="email" value={email} onChange={e => { setEmail(e.target.value); clearMessages(); }} required className="w-full px-4 py-3 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/5 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 dark:focus:border-cyan-500/50 focus:ring-1 focus:ring-blue-500 dark:focus:ring-cyan-500/50 transition-all" placeholder="name@agency.com" />
+                    <label htmlFor="email" className="block text-xs font-semibold text-stone-500 uppercase tracking-wider mb-1.5">Email address</label>
+                    <input type="email" id="email" value={email} onChange={e => { setEmail(e.target.value); clearMessages(); }} required className="w-full px-4 py-3 bg-white border border-stone-300 rounded-md text-stone-900 placeholder-stone-400 focus:outline-none focus:border-stone-500 focus:ring-0 transition-all" placeholder="name@agency.com" />
                 </div>
                 <div>
-                    <label htmlFor="password"className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Password</label>
-                    <input type="password" id="password" value={password} onChange={e => { setPassword(e.target.value); clearMessages(); }} required minLength={6} className="w-full px-4 py-3 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/5 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 dark:focus:border-cyan-500/50 focus:ring-1 focus:ring-blue-500 dark:focus:ring-cyan-500/50 transition-all" placeholder="••••••••" />
+                    <label htmlFor="password"className="block text-xs font-semibold text-stone-500 uppercase tracking-wider mb-1.5">Password</label>
+                    <input type="password" id="password" value={password} onChange={e => { setPassword(e.target.value); clearMessages(); }} required minLength={6} className="w-full px-4 py-3 bg-white border border-stone-300 rounded-md text-stone-900 placeholder-stone-400 focus:outline-none focus:border-stone-500 focus:ring-0 transition-all" placeholder="••••••••" />
                 </div>
                 
                 {!isLogin && (
@@ -190,27 +183,27 @@ const AuthForm: React.FC<AuthFormProps> = ({ onBackToWebsite }) => {
                             setTermsAccepted(e.target.checked);
                             if (e.target.checked) setTermsError(null);
                           }}
-                          className="h-4 w-4 rounded border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-black/20 text-blue-600 dark:text-cyan-600 focus:ring-blue-500 dark:focus:ring-cyan-500 focus:ring-offset-0"
+                          className="h-4 w-4 rounded border-stone-300 text-stone-900 focus:ring-stone-500"
                         />
                       </div>
                       <div className="ml-3 text-sm">
-                        <label htmlFor="terms" className="font-medium text-slate-600 dark:text-slate-400">
-                          I agree to the <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-cyan-400 hover:underline transition-colors">Terms and Conditions</a>
+                        <label htmlFor="terms" className="font-medium text-stone-600">
+                          I agree to the <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-stone-900 hover:underline transition-colors">Terms and Conditions</a>
                         </label>
                       </div>
                     </div>
-                    {termsError && <p className="text-red-500 dark:text-red-400 text-xs mt-2 ml-1">{termsError}</p>}
+                    {termsError && <p className="text-red-600 text-xs mt-2 ml-1">{termsError}</p>}
                   </div>
                 )}
 
                 {resetMessage && (
-                  <p className={`text-sm text-center p-3 rounded-lg ${resetMessage.type === 'success' ? 'bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400' : 'bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400'}`}>
+                  <p className={`text-sm text-center p-3 rounded-md ${resetMessage.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
                     {resetMessage.text}
                   </p>
                 )}
-                {error && <p className="text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 p-3 rounded-lg text-sm text-center">{error}</p>}
+                {error && <p className="text-red-700 bg-red-50 p-3 rounded-md text-sm text-center">{error}</p>}
 
-                <button type="submit" disabled={isLoading} className="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 dark:shadow-cyan-500/20 transition-all transform hover:scale-[1.02] disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none">
+                <button type="submit" disabled={isLoading} className="w-full py-3.5 px-4 bg-stone-900 hover:bg-stone-800 text-white font-semibold rounded-md shadow-sm transition-all disabled:opacity-70 disabled:cursor-not-allowed">
                     {isLoading ? (
                         <span className="flex items-center justify-center gap-2">
                             <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -228,7 +221,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onBackToWebsite }) => {
                             type="button"
                             onClick={handlePasswordReset}
                             disabled={isLoading}
-                            className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-cyan-400 transition-colors"
+                            className="text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors"
                         >
                             Forgot your password?
                         </button>
@@ -237,12 +230,12 @@ const AuthForm: React.FC<AuthFormProps> = ({ onBackToWebsite }) => {
             </form>
         </div>
       </div>
-      <div className="relative z-10 text-center pt-8 flex gap-4 items-center justify-center text-xs text-slate-500 dark:text-slate-500">
-        <a href="https://lightpath.agency/privacy" target="_blank" rel="noopener noreferrer" className="hover:text-slate-800 dark:hover:text-slate-300 transition-colors">
+      <div className="relative z-10 text-center pt-8 flex gap-4 items-center justify-center text-xs text-stone-400">
+        <a href="https://lightpath.agency/privacy" target="_blank" rel="noopener noreferrer" className="hover:text-stone-600 transition-colors">
             Privacy Policy
         </a>
-        <span className="text-slate-400 dark:text-slate-700">•</span>
-        <a href="https://lightpath.agency/terms" target="_blank" rel="noopener noreferrer" className="hover:text-slate-800 dark:hover:text-slate-300 transition-colors">
+        <span className="text-stone-300">•</span>
+        <a href="https://lightpath.agency/terms" target="_blank" rel="noopener noreferrer" className="hover:text-stone-600 transition-colors">
             Terms & Conditions
         </a>
       </div>

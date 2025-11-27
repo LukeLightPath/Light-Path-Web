@@ -94,37 +94,52 @@ Output only the ICP.
 Do not add explanations or commentary.
 Do not reference these instructions.`;
 
+const parseBold = (text: string) => {
+  const parts = text.split(/(\*\*.*?\*\*)/g);
+  return parts.map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={index} className="font-bold text-slate-900 dark:text-slate-100">{part.slice(2, -2)}</strong>;
+    }
+    return part;
+  });
+};
+
 const FormattedResult = ({ text }: { text: string }) => {
-  // Regex to find markdown bold syntax (**) and numbered list items.
-  const markdownTitleRegex = /^\s*\*\*(.*)\*\*\s*$/; // Matches **anything**
-  const numberedTitleRegex = /^\s*\d+\..*/;
+  const lines = text.split('\n');
 
   return (
-    <div className="font-sans text-left text-slate-800 dark:text-slate-200 text-lg">
-      {text.split('\n').map((line, index) => {
-        const markdownMatch = line.match(markdownTitleRegex);
-        const isNumberedTitle = numberedTitleRegex.test(line);
+    <div className="font-sans text-left text-slate-800 dark:text-slate-200 text-lg space-y-1">
+      {lines.map((line, index) => {
+        const trimmed = line.trim();
+        if (!trimmed) return <div key={index} className="h-3" />;
 
-        if (isNumberedTitle) {
-          // It's a numbered title, render it as bold
-          // Strip potential markdown asterisks for rendering
-          const cleanLine = markdownMatch ? markdownMatch[1] : line;
-          return (
-            <p key={index} className="font-bold font-heading mt-8 mb-4 text-2xl text-slate-900 dark:text-slate-100">
-              {cleanLine.trim()}
-            </p>
-          );
-        }
-        
-        // Handle empty lines as spacers
-        if (line.trim() === '') {
-          return <div key={index} className="h-4" />;
+        // Handle Headers (### or **Heading**)
+        const isBoldHeader = trimmed.startsWith('**') && trimmed.endsWith('**') && trimmed.length < 100;
+        if (trimmed.startsWith('#') || isBoldHeader) {
+            const clean = trimmed.replace(/^#+\s*/, '').replace(/^\*\*/, '').replace(/\*\*$/, '');
+            return <h3 key={index} className="text-2xl font-bold font-heading text-slate-900 dark:text-slate-100 mt-8 mb-4">{clean}</h3>
         }
 
-        // Render normal lines of text
+        // List Items (1. or - or *)
+        const listMatch = trimmed.match(/^(\d+\.|-|\*)\s+(.*)/);
+        if (listMatch) {
+            const bullet = listMatch[1];
+            const content = listMatch[2];
+            const isNumber = /^\d+\./.test(bullet);
+            
+            return (
+                <div key={index} className="flex items-start gap-3 mb-3 ml-1">
+                    <span className={`flex-shrink-0 mt-1 ${isNumber ? 'font-bold text-slate-900 dark:text-slate-100' : 'w-1.5 h-1.5 rounded-full bg-slate-400 mt-2.5'}`}>
+                        {isNumber ? bullet : ''}
+                    </span>
+                    <div className="text-slate-700 dark:text-slate-300 leading-relaxed">{parseBold(content)}</div>
+                </div>
+            )
+        }
+
         return (
-          <p key={index} className="mb-2 leading-relaxed">
-            {line}
+          <p key={index} className="mb-2 leading-relaxed text-slate-700 dark:text-slate-300">
+            {parseBold(trimmed)}
           </p>
         );
       })}

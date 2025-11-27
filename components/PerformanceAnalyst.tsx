@@ -37,51 +37,73 @@ If an industry is unknown, choose the closest logical category.
 
 All comparisons must be based on user inputs vs typical industry ranges.`;
 
+const parseBold = (text: string) => {
+  const parts = text.split(/(\*\*.*?\*\*)/g);
+  return parts.map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={index} className="font-bold text-slate-900 dark:text-slate-100">{part.slice(2, -2)}</strong>;
+    }
+    return part;
+  });
+};
+
 const FormattedResult = ({ text }: { text: string }) => {
-  const tableHeaderRegex = /^\s*\|.*Metric.*\|\s*$/;
-  const tableDividerRegex = /^\s*\|.*---\s*.*\|.*$/;
+  const lines = text.split('\n');
 
   return (
-    <div className="font-sans text-left text-slate-800 dark:text-slate-200 text-lg">
-      {text.split('\n').map((line, index) => {
-        const isTableHeader = tableHeaderRegex.test(line);
-        const isTableDivider = tableDividerRegex.test(line);
-        const isTableBody = line.trim().startsWith('|') && !isTableHeader && !isTableDivider;
+    <div className="space-y-1 font-sans text-left text-slate-800 dark:text-slate-200 text-lg">
+      {lines.map((line, index) => {
+        const trimmed = line.trim();
+        if (!trimmed) return <div key={index} className="h-3" />;
 
-        if (isTableHeader || isTableBody) {
-          const cells = line.split('|').map(c => c.trim()).filter(c => c);
-          if (cells.length === 0) return null;
-          return (
-            <div key={index} className={`grid grid-cols-4 gap-4 py-3 ${isTableHeader ? 'font-bold font-heading border-b border-slate-300 dark:border-slate-600 text-lg' : 'border-b border-slate-200 dark:border-slate-700'}`}>
-              {cells.map((cell, cellIndex) => (
-                <span key={cellIndex}>{cell}</span>
-              ))}
-            </div>
-          );
-        }
-
-        if (isTableDivider) {
-          return null; // Don't render the markdown table divider
-        }
-
-        // Make section titles bold
-        if (line.endsWith("Summary") || line.endsWith("Table") || line.endsWith("Insights") || line.endsWith("Plan") || line.endsWith("Conclusion")) {
-             return (
-                <p key={index} className="font-bold font-heading mt-8 mb-4 text-2xl text-slate-900 dark:text-slate-100">
-                {line.trim()}
-                </p>
-            );
+        // Headers (### or ##)
+        if (trimmed.startsWith('#')) {
+           const clean = trimmed.replace(/^#+\s*/, '').replace(/\*\*/g, '');
+           return <h3 key={index} className="text-2xl font-bold font-heading text-slate-900 dark:text-slate-100 mt-8 mb-4">{clean}</h3>
         }
         
-        if (line.trim() === '') {
-          return <div key={index} className="h-4" />;
+        // Explicit Section Titles fallback (if AI doesn't use #)
+        const isSectionTitle = ["Competitiveness Score Summary", "Benchmark Comparison Table", "Key Insights", "Action Plan", "Short Conclusion"].some(t => trimmed.includes(t));
+        if (isSectionTitle && trimmed.length < 100) {
+            return <h3 key={index} className="text-2xl font-bold font-heading text-slate-900 dark:text-slate-100 mt-8 mb-4">{trimmed.replace(/\*\*/g, '')}</h3>
         }
 
-        return (
-          <p key={index} className="mb-2 leading-relaxed">
-            {line}
-          </p>
-        );
+        // Tables (| Col | Col |)
+        if (trimmed.startsWith('|')) {
+            // Ignore separator rows (e.g. |---|---|)
+            if (trimmed.match(/^\|?[-:\s|]+\|?$/)) return null;
+            
+            const cells = trimmed.split('|').filter(c => c.trim());
+            // If the row contains "Metric" or looks like a header
+            const isHeader = cells.some(c => c.includes('Metric') || c.includes('Status') || c.includes('Benchmark'));
+
+            return (
+                <div key={index} className={`grid grid-cols-2 md:grid-cols-4 gap-4 py-3 border-b ${isHeader ? 'border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 font-bold text-slate-900 dark:text-slate-100 rounded-t-lg' : 'border-slate-100 dark:border-slate-700 text-slate-700 dark:text-slate-300'}`}>
+                    {cells.map((cell, i) => (
+                        <div key={i} className="px-2 text-sm md:text-base flex items-center">{parseBold(cell.trim())}</div>
+                    ))}
+                </div>
+            )
+        }
+
+        // List Items (1. or - or *)
+        const listMatch = trimmed.match(/^(\d+\.|-|\*)\s+(.*)/);
+        if (listMatch) {
+            const bullet = listMatch[1];
+            const content = listMatch[2];
+            const isNumber = /^\d+\./.test(bullet);
+            
+            return (
+                <div key={index} className="flex items-start gap-3 mb-3 ml-1">
+                    <span className={`flex-shrink-0 mt-1 ${isNumber ? 'font-bold text-slate-900 dark:text-slate-100' : 'w-1.5 h-1.5 rounded-full bg-slate-400 mt-2.5'}`}>
+                        {isNumber ? bullet : ''}
+                    </span>
+                    <div className="text-slate-700 dark:text-slate-300 leading-relaxed">{parseBold(content)}</div>
+                </div>
+            )
+        }
+
+        return <p key={index} className="text-slate-700 dark:text-slate-300 leading-relaxed mb-2">{parseBold(trimmed)}</p>
       })}
     </div>
   );
@@ -167,7 +189,7 @@ const PerformanceAnalyst: React.FC<PerformanceAnalystProps> = ({ onBack }) => {
              <div className="text-center">
                 <h3 className="text-3xl font-bold text-slate-800 dark:text-slate-100 font-heading">Performance Analysis Report</h3>
             </div>
-            <div className="bg-white dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg">
+            <div className="bg-[#FFFFFF] dark:bg-slate-800 p-8 rounded-lg border border-[#E5E7EB] dark:border-slate-700 shadow-sm">
                 <FormattedResult text={result} />
             </div>
             <div className="flex justify-center gap-4 pt-4">
