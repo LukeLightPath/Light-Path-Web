@@ -1,4 +1,4 @@
-import { collection, query, getDocs, doc, setDoc, deleteDoc, DocumentData } from 'firebase/firestore';
+import { collection, query, getDocs, doc, setDoc, deleteDoc, DocumentData, getDoc, limit } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 
 // Updated Persona Interface with required and optional fields
@@ -52,21 +52,22 @@ export async function fetchActivePersona(): Promise<Persona | null> {
     console.log("fetchActivePersona: No user logged in.");
     return null;
   }
-  
+
   const collectionPath = `users/${user.uid}/personas`;
   const personasRef = collection(db, collectionPath);
 
   try {
-    const querySnapshot = await getDocs(query(personasRef));
-    
+    const defaultPersonaDoc = await getDoc(doc(personasRef, PERSONA_DOC_ID));
+    if (defaultPersonaDoc.exists()) {
+      return { id: defaultPersonaDoc.id, ...defaultPersonaDoc.data() } as Persona;
+    }
+
+    const fallbackQuery = query(personasRef, limit(1));
+    const querySnapshot = await getDocs(fallbackQuery);
+
     if (querySnapshot.empty) {
       console.log("fetchActivePersona: No personas found for this user.");
       return null;
-    }
-
-    const defaultDoc = querySnapshot.docs.find(doc => doc.data().isDefault === true);
-    if (defaultDoc) {
-      return { id: defaultDoc.id, ...defaultDoc.data() } as Persona;
     }
 
     const fallbackDoc = querySnapshot.docs[0];
